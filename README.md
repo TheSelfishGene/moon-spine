@@ -3,6 +3,7 @@
 
 
 - ▶ **Try it:** https://theselfishgene.github.io/moon-spine/
+- 🎬 **Demo video:** https://theselfishgene.github.io/moon-spine/demo.mp4
 
 ## About
 
