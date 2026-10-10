@@ -1,0 +1,367 @@
+<!doctype html>
+<html lang="en">
+<head><meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src data: blob:; font-src data:; media-src data: blob:; base-uri 'none'; form-action 'none'">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Moon Spine</title>
+<style>
+:root{--gold:#f2c94c;--ink:#2a2347;--deep:#1f1a33;--mid:#3b2f5c;--lav:#cfc3f0;--wood:#8a6a3b;--card:#ffffff14;--line:#ffffff26}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;min-height:100vh;color:#fff;font-family:system-ui,"Hiragino Sans","Noto Sans JP","Yu Gothic",sans-serif;background:linear-gradient(#3b2f5c,#1f1a33) fixed;line-height:1.55}
+button,input,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+.wrap{max-width:900px;margin:0 auto;padding:16px 16px 80px}
+header{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:6px 0 14px}
+.brand{display:flex;align-items:center;gap:10px}
+.brand b{font-family:Georgia,"Times New Roman",serif;font-size:24px;color:var(--gold);letter-spacing:1px}
+.lang{display:flex;border:1px solid var(--line);border-radius:20px;overflow:hidden}
+.lang button{background:none;border:0;padding:6px 12px;font-size:13px;color:var(--lav)}
+.lang button[aria-pressed=true]{background:var(--gold);color:var(--ink);font-weight:700}
+.tag{margin:0 0 14px;color:var(--lav);font-size:14px}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:18px}
+.gacha{display:grid;gap:18px;text-align:center;margin-bottom:22px}
+@media(min-width:700px){.gacha{grid-template-columns:200px 1fr;text-align:left;align-items:center}}
+.orb{width:150px;height:150px;margin:0 auto;border-radius:50%;background:radial-gradient(circle at 35% 30%,#ffffff40,#ffffff12);border:4px solid var(--gold);display:flex;align-items:center;justify-content:center;font-size:64px;box-shadow:0 0 30px #f2c94c44;animation:float 4s ease-in-out infinite}
+.orb.shake{animation:shake .25s linear infinite}
+@keyframes float{50%{transform:translateY(-6px)}}
+@keyframes shake{0%{transform:rotate(-8deg)}50%{transform:rotate(8deg) scale(1.05)}100%{transform:rotate(-8deg)}}
+.gh{font-size:13px;color:var(--lav);margin:0}
+.btn{background:var(--gold);color:var(--ink);border:0;border-radius:30px;padding:12px 22px;font-weight:800;box-shadow:0 4px 14px #0004}
+.btn:disabled{opacity:.55;cursor:not-allowed}
+.btn.ghost{background:#ffffff1a;color:#fff;box-shadow:none;border:1px solid var(--line);font-weight:600}
+.btn.sm{padding:8px 14px;font-size:14px}
+.result{margin:14px 0;background:#fff;color:var(--ink);border-radius:14px;padding:14px;text-align:left;box-shadow:0 6px 16px #0005;animation:rise .5s ease-out}
+@keyframes rise{from{opacity:0;transform:translateY(14px)}}
+.result .g{font-size:12px;color:#8a7fb0}
+.result .n{font-size:19px;font-weight:800;margin:2px 0}
+.result .c{font-size:14px}
+.stars{color:#d9a516;letter-spacing:1px}
+.result .stars{color:#c48f00}
+.row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.reset{background:none;border:0;color:var(--lav);font-size:12px;text-decoration:underline;padding:6px 0;margin-top:6px}
+.bar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:space-between;margin-bottom:14px}
+.chip{background:#ffffff1a;border:1px solid transparent;border-radius:20px;padding:8px 14px;font-size:14px;color:#fff}
+.chip[aria-pressed=true]{background:var(--gold);color:var(--ink);font-weight:700}
+.shelf{margin-bottom:26px}
+.shelf h2{font-size:13px;color:var(--gold);margin:0 0 4px;font-weight:700}
+.rack{display:flex;gap:6px;align-items:flex-end;overflow-x:auto;padding:20px 6px 0;border-bottom:8px solid var(--wood);box-shadow:0 8px 14px -6px #0008;min-height:60px;scrollbar-width:thin}
+.spine{writing-mode:vertical-rl;flex:none;border:0;border-radius:3px 3px 2px 2px;color:var(--ink);font-weight:700;font-size:12px;padding:10px 0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;box-shadow:inset -3px 0 0 #0002,inset 2px 0 0 #fff4;background-image:linear-gradient(transparent 10px,#f2c94c99 10px,#f2c94c99 12px,transparent 12px);transition:transform .2s}
+.spine:hover,.spine:focus-visible{transform:translateY(-10px)}
+.spine.today{transform:translateY(-14px);box-shadow:0 0 0 2px var(--gold),0 0 18px var(--gold);animation:pop 1s ease-out}
+@keyframes pop{0%{transform:translateY(0)}40%{transform:translateY(-34px)}100%{transform:translateY(-14px)}}
+.empty{color:var(--lav);font-size:13px;padding:0 0 10px}
+.form{margin-bottom:22px;display:none}
+.form.on{display:block;animation:rise .3s}
+.form h3{margin:0 0 10px;font-size:16px;color:var(--gold)}
+label.l{display:block;font-size:12px;color:var(--lav);margin:12px 0 4px}
+input[type=text],textarea{width:100%;background:#0003;border:1px solid var(--line);border-radius:10px;padding:10px 12px}
+input::placeholder,textarea::placeholder{color:#cfc3f099}
+textarea{min-height:64px;resize:vertical}
+.sw{width:30px;height:30px;border-radius:50%;border:3px solid transparent;padding:0}
+.sw[aria-pressed=true]{border-color:#fff}
+.star{background:none;border:0;font-size:26px;color:#ffffff55;padding:0 2px}
+.star.on{color:var(--gold)}
+.sheet{position:fixed;inset:0;background:#0009;display:none;align-items:flex-end;justify-content:center;z-index:10}
+.sheet.on{display:flex}
+.card{background:#fff;color:var(--ink);width:100%;max-width:520px;border-radius:22px 22px 0 0;padding:20px;max-height:88vh;overflow:auto;animation:rise .3s}
+@media(min-width:600px){.sheet{align-items:center}.card{border-radius:22px}}
+.card h3{margin:2px 0;font-size:22px}
+.card .g{font-size:12px;color:#8a7fb0}
+.card .by{font-size:14px;color:#6b6190}
+.notes{margin:12px 0;padding:0;list-style:none;font-size:14px}
+.notes li{background:#f1edfb;border-radius:10px;padding:8px 10px;margin-bottom:6px}
+.card input{background:#f6f3fd;color:var(--ink);border-color:#d8d0ee}
+.card .btn.ghost{color:var(--ink);border-color:#c9c0e6;background:#f1edfb}
+.card .btn.del{background:#fde7ea;color:#9b2339;border-color:#f3b8c2}
+.toast{position:fixed;left:50%;bottom:20px;transform:translateX(-50%);background:var(--gold);color:var(--ink);padding:10px 18px;border-radius:30px;font-weight:700;font-size:14px;box-shadow:0 6px 18px #0006;z-index:20;opacity:0;pointer-events:none;transition:opacity .3s;max-width:90vw;text-align:center}
+.toast.on{opacity:1}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <div class="brand">
+    <svg width="38" height="38" viewBox="0 0 120 120" aria-hidden="true"><circle cx="60" cy="60" r="44" fill="#f2c94c"/><circle cx="78" cy="48" r="40" fill="#2a2347"/><rect x="40" y="70" width="10" height="34" rx="2" fill="#e07a8c"/><rect x="54" y="62" width="12" height="42" rx="2" fill="#7ec8c0"/><rect x="70" y="74" width="10" height="30" rx="2" fill="#9b8ae0"/></svg>
+    <b>Moon Spine</b>
+  </div>
+  <div class="lang" data-demo="lang-switch" role="group" aria-label="Language">
+    <button type="button" id="lj" data-demo="lang-ja">日本語</button>
+    <button type="button" id="le" data-demo="lang-en">EN</button>
+  </div>
+</header>
+<p class="tag" data-i18n="tagline"></p>
+
+<section class="panel gacha" data-demo="gacha-area" aria-labelledby="gt">
+  <div class="orb" id="orb" aria-hidden="true">🎁</div>
+  <div>
+    <p class="gh" id="gt" data-i18n="gachaTitle"></p>
+    <p class="gh" id="gstatus" style="color:#fff;font-size:15px;margin-top:4px"></p>
+    <div id="gresult" data-demo="gacha-result" aria-live="polite"></div>
+    <div class="row">
+      <button type="button" class="btn" id="gbtn" data-demo="gacha-spin"></button>
+      <button type="button" class="reset" id="greset" data-demo="gacha-reset" data-i18n="demoReset"></button>
+    </div>
+  </div>
+</section>
+
+<div class="bar">
+  <div class="row" role="group" data-i18n-aria="filterLabel">
+    <button type="button" class="chip" data-f="all" data-demo="filter-all" data-i18n="fAll"></button>
+    <button type="button" class="chip" data-f="book" data-demo="filter-book" data-i18n="fBook"></button>
+    <button type="button" class="chip" data-f="movie" data-demo="filter-movie" data-i18n="fMovie"></button>
+    <button type="button" class="chip" data-f="music" data-demo="filter-music" data-i18n="fMusic"></button>
+  </div>
+  <button type="button" class="btn sm" id="addBtn" data-demo="add-toggle" data-i18n="addBtn"></button>
+</div>
+
+<form class="panel form" id="form" data-demo="add-form" autocomplete="off">
+  <h3 data-i18n="formTitle"></h3>
+  <label class="l" data-i18n="lGenre"></label>
+  <div class="row" id="fGenre" role="group"></div>
+  <label class="l" for="fTitle" data-i18n="lTitle"></label>
+  <input type="text" id="fTitle" data-demo="input-title" maxlength="40" data-i18n-ph="phTitle">
+  <label class="l" for="fBy" id="lBy"></label>
+  <input type="text" id="fBy" data-demo="input-creator" maxlength="40">
+  <label class="l" data-i18n="lRating"></label>
+  <div class="row" id="fStars" role="group"></div>
+  <label class="l" for="fCom" data-i18n="lComment"></label>
+  <textarea id="fCom" data-demo="input-comment" maxlength="120" data-i18n-ph="phComment"></textarea>
+  <label class="l" data-i18n="lColor"></label>
+  <div class="row" id="fColors" role="group"></div>
+  <div class="row" style="margin-top:16px">
+    <button type="submit" class="btn" data-demo="add-save" data-i18n="save"></button>
+    <button type="button" class="btn ghost" id="cancel" data-demo="add-cancel" data-i18n="cancel"></button>
+  </div>
+</form>
+
+<main id="shelves" data-demo="shelves"></main>
+</div>
+
+<div class="sheet" id="sheet" role="dialog" aria-modal="true" aria-labelledby="sTitle">
+  <div class="card" id="card" data-demo="detail-card"></div>
+</div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+const I18N={
+ja:{
+title:"Moon Spine",tagline:"月の下で、今日の一冊に会おう",
+gachaTitle:"今日の再会ガチャ",gachaBtn:"🎲 今日のガチャを回す",gachaDone:"今日はもう回しました。また明日 🌙",
+gachaReady:"棚から、今日出会う1つを選びます。",gachaToday:"今日の再会はこちら",gachaEmpty:"先に棚へ作品を追加してください。",gachaSpin:"月の光を集めています…",
+demoReset:"デモ用：ガチャをリセット",resetDone:"ガチャをリセットしました",
+fAll:"🌙 すべて",fBook:"📖 本",fMovie:"🎬 映画",fMusic:"🎧 音楽",filterLabel:"ジャンルの絞り込み",
+addBtn:"＋ 棚に追加",formTitle:"新しい背表紙を棚へ",lGenre:"ジャンル",lTitle:"タイトル",phTitle:"例：夜のあいだに",
+by_book:"著者",by_movie:"監督",by_music:"アーティスト",lRating:"評価",lComment:"ひとこと感想",phComment:"例：眠れない夜に読み返したい",lColor:"背表紙の色",
+save:"棚に並べる",cancel:"閉じる",
+shelf_book:"本の段",shelf_movie:"映画の段",shelf_music:"音楽の段",
+emptyShelf:"まだ何もありません。最初の1つを並べましょう。",
+close:"閉じる",del:"棚から外す",delSure:"もう一度押すと外します",
+notesTitle:"あとから一言",noNotes:"まだ一言はありません。",phNote:"再会して思ったことを一言",addNote:"追加",
+added:"棚に並べました ✨",removed:"棚から外しました",noteSaved:"一言を残しました",needTitle:"タイトルを入力してください",
+open:"くわしく見る",ratingAria:"星",spineAria:"背表紙",genreName_book:"本",genreName_movie:"映画",genreName_music:"音楽",
+reunion:"再会",countAria:"冊"
+},
+en:{
+title:"Moon Spine",tagline:"Meet today's favorite under the moon",
+gachaTitle:"Today's Reunion Gacha",gachaBtn:"🎲 Spin today's gacha",gachaDone:"You've already spun today. See you tomorrow 🌙",
+gachaReady:"Pick one item from your shelf to meet again today.",gachaToday:"Today's reunion",gachaEmpty:"Add something to your shelf first.",gachaSpin:"Gathering moonlight…",
+demoReset:"Demo: reset gacha",resetDone:"Gacha has been reset",
+fAll:"🌙 All",fBook:"📖 Books",fMovie:"🎬 Movies",fMusic:"🎧 Music",filterLabel:"Filter by genre",
+addBtn:"+ Add to shelf",formTitle:"Add a new spine",lGenre:"Genre",lTitle:"Title",phTitle:"e.g. While the Night Passes",
+by_book:"Author",by_movie:"Director",by_music:"Artist",lRating:"Rating",lComment:"Short comment",phComment:"e.g. For re-reading on sleepless nights",lColor:"Spine color",
+save:"Place on shelf",cancel:"Close",
+shelf_book:"Books shelf",shelf_movie:"Movies shelf",shelf_music:"Music shelf",
+emptyShelf:"Nothing here yet. Add your first one.",
+close:"Close",del:"Remove from shelf",delSure:"Press again to remove",
+notesTitle:"Notes for later",noNotes:"No notes yet.",phNote:"A line about meeting it again",addNote:"Add",
+added:"Added to your shelf ✨",removed:"Removed from your shelf",noteSaved:"Note saved",needTitle:"Please enter a title",
+open:"See details",ratingAria:"stars",spineAria:"spine",genreName_book:"Book",genreName_movie:"Movie",genreName_music:"Music",
+reunion:"Reunion",countAria:"items"
+}};
+const G={book:"📖",movie:"🎬",music:"🎧"};
+const GK=["book","movie","music"];
+const COLORS=["#e07a8c","#f2c94c","#7ec8c0","#9b8ae0","#e8a06a","#8fc07a"];
+const SAMPLE=[
+{id:"s1",g:"book",t:{ja:"夜のあいだに",en:"While the Night Passes"},by:{ja:"森川 澄",en:"Sumi Morikawa"},r:4,c:{ja:"眠れない夜に少しずつ読みたい",en:"Perfect to read bit by bit on sleepless nights"},col:0,notes:[]},
+{id:"s2",g:"book",t:{ja:"小さな灯台",en:"The Little Lighthouse"},by:{ja:"白石 凪",en:"Nagi Shiraishi"},r:5,c:{ja:"読み終えて、胸があたたかくなった",en:"It left my heart warm"},col:1,notes:[]},
+{id:"s3",g:"book",t:{ja:"紙の月のレシピ",en:"Recipes of the Paper Moon"},by:{ja:"青木 ひなた",en:"Hinata Aoki"},r:3,c:{ja:"料理の描写がとにかくおいしそう",en:"The food scenes sound so delicious"},col:2,notes:[]},
+{id:"s4",g:"book",t:{ja:"雨の日の図書館",en:"The Library on Rainy Days"},by:{ja:"大塚 澪",en:"Mio Otsuka"},r:4,c:{ja:"雨音と一緒にもう一度読みたい",en:"I want to read it again with the sound of rain"},col:3,notes:[]},
+{id:"s5",g:"movie",t:{ja:"海辺のカフェ",en:"The Seaside Café"},by:{ja:"高梨 遥",en:"Haruka Takanashi"},r:4,c:{ja:"ゆっくり観たい日に",en:"For a slow, quiet day"},col:2,notes:[]},
+{id:"s6",g:"movie",t:{ja:"真夜中の列車",en:"Midnight Train"},by:{ja:"J. ハート",en:"J. Hart"},r:5,c:{ja:"ラストの駅のシーンで鳥肌",en:"The final station scene gave me chills"},col:0,notes:[]},
+{id:"s7",g:"movie",t:{ja:"春を待つ人",en:"Waiting for Spring"},by:{ja:"西野 蓮",en:"Ren Nishino"},r:3,c:{ja:"静かで景色がきれい",en:"Quiet, with beautiful scenery"},col:4,notes:[]},
+{id:"s8",g:"music",t:{ja:"Blue Hour",en:"Blue Hour"},by:{ja:"Lumi",en:"Lumi"},r:5,c:{ja:"夕暮れの帰り道に最高",en:"Best on the walk home at dusk"},col:3,notes:[]},
+{id:"s9",g:"music",t:{ja:"窓辺のピアノ",en:"Piano by the Window"},by:{ja:"天野 琴音",en:"Kotone Amano"},r:4,c:{ja:"作業のお供にぴったり",en:"A great companion for working"},col:5,notes:[]},
+{id:"s10",g:"music",t:{ja:"Late Night Radio",en:"Late Night Radio"},by:{ja:"The Moth Club",en:"The Moth Club"},r:4,c:{ja:"夜ふかしの気分になる",en:"Makes me feel like staying up late"},col:1,notes:[]}
+];
+let lang="en",state={items:[],gacha:null},filter="all",form={g:"book",r:4,col:0},openId=null,delArm=false,spinning=false,tt;
+const $=s=>document.querySelector(s);
+const t=k=>(I18N[lang]&&I18N[lang][k])||k;
+const tx=v=>v&&typeof v==="object"?(v[lang]||v.ja||v.en||""):(v||"");
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const stars=n=>"★".repeat(n)+"☆".repeat(5-n);
+function today(){const d=new Date();return d.getFullYear()+"-"+(d.getMonth()+1)+"-"+d.getDate()}
+function load(){
+  try{const s=JSON.parse(localStorage.getItem("moonspine.v1"));if(s&&Array.isArray(s.items)){state=s;return}}catch(e){}
+  state={items:JSON.parse(JSON.stringify(SAMPLE)),gacha:null};
+}
+function save(){try{localStorage.setItem("moonspine.v1",JSON.stringify(state))}catch(e){}}
+function initLang(){
+  let l=null;
+  if(window.APP_LANG==="ja"||window.APP_LANG==="en")l=window.APP_LANG;
+  if(!l){try{const q=new URLSearchParams(location.search).get("lang");if(q==="ja"||q==="en")l=q}catch(e){}}
+  if(!l){try{const s=localStorage.getItem("lang");if(s==="ja"||s==="en")l=s}catch(e){}}
+  lang=l||"en";
+}
+function setLang(l,persist){
+  lang=l;
+  if(persist){try{localStorage.setItem("lang",l)}catch(e){}}
+  applyLang();
+}
+function applyLang(){
+  document.documentElement.lang=lang;
+  document.title=t("title");
+  document.querySelectorAll("[data-i18n]").forEach(e=>e.textContent=t(e.dataset.i18n));
+  document.querySelectorAll("[data-i18n-ph]").forEach(e=>e.placeholder=t(e.dataset.i18nPh));
+  document.querySelectorAll("[data-i18n-aria]").forEach(e=>e.setAttribute("aria-label",t(e.dataset.i18nAria)));
+  $("#lj").setAttribute("aria-pressed",lang==="ja");$("#le").setAttribute("aria-pressed",lang==="en");
+  $("#lBy").textContent=t("by_"+form.g);
+  $("#sheet").setAttribute("aria-label",t("title"));
+  renderForm();renderFilters();renderShelves();renderGacha();renderSheet();
+}
+function hash(s){let h=0;for(const c of String(s))h=(h*31+c.charCodeAt(0))>>>0;return h}
+function spineSize(it){
+  const h=hash(it.id+tx(it.t));
+  const base={book:118,movie:98,music:80}[it.g];
+  return{h:base+(h%34),w:34+(h>>3)%12};
+}
+function renderFilters(){
+  document.querySelectorAll(".chip[data-f]").forEach(b=>b.setAttribute("aria-pressed",b.dataset.f===filter));
+}
+function renderShelves(){
+  const todayId=state.gacha&&state.gacha.date===today()?state.gacha.id:null;
+  const box=$("#shelves");box.innerHTML="";
+  GK.filter(g=>filter==="all"||filter===g).forEach(g=>{
+    const list=state.items.filter(i=>i.g===g);
+    const s=document.createElement("section");s.className="shelf";s.setAttribute("data-demo","shelf-"+g);
+    let html=`<h2>${G[g]} ${esc(t("shelf_"+g))} (${list.length})</h2><div class="rack">`;
+    if(!list.length)html+=`<div class="empty">${esc(t("emptyShelf"))}</div>`;
+    list.forEach(it=>{
+      const z=spineSize(it);
+      html+=`<button type="button" class="spine${it.id===todayId?" today":""}" data-id="${esc(it.id)}" data-demo="spine-${esc(it.id)}" aria-label="${esc(t("spineAria"))}: ${esc(tx(it.t))}" title="${esc(tx(it.t))}" style="height:${z.h}px;width:${z.w}px;background-color:${COLORS[it.col%COLORS.length]}">${esc(tx(it.t))}</button>`;
+    });
+    html+="</div>";s.innerHTML=html;box.appendChild(s);
+  });
+  box.querySelectorAll(".spine").forEach(b=>b.onclick=()=>openSheet(b.dataset.id));
+}
+function renderGacha(){
+  const done=state.gacha&&state.gacha.date===today();
+  const it=done?state.items.find(i=>i.id===state.gacha.id):null;
+  const btn=$("#gbtn");
+  btn.textContent=t("gachaBtn");
+  btn.disabled=done||spinning;
+  const st=$("#gstatus"),res=$("#gresult");
+  if(spinning){st.textContent=t("gachaSpin");return}
+  if(!state.items.length){st.textContent=t("gachaEmpty");res.innerHTML="";return}
+  if(done&&it){
+    st.textContent=t("gachaDone");
+    res.innerHTML=`<div class="result"><div class="g">${G[it.g]} ${esc(t("genreName_"+it.g))} ・ ${esc(t("gachaToday"))}</div><div class="n">${esc(tx(it.t))}</div><div class="c"><span class="stars">${stars(it.r)}</span> 「${esc(tx(it.c))}」</div><div class="row" style="margin-top:10px"><button type="button" class="btn sm" id="gopen" data-demo="gacha-open">${esc(t("open"))}</button></div></div>`;
+    $("#gopen").onclick=()=>openSheet(it.id);
+  }else{
+    st.textContent=t("gachaReady");res.innerHTML="";
+  }
+}
+function spin(){
+  if(spinning||!state.items.length)return;
+  if(state.gacha&&state.gacha.date===today())return;
+  spinning=true;$("#orb").classList.add("shake");renderGacha();
+  setTimeout(()=>{
+    const it=state.items[Math.floor(Math.random()*state.items.length)];
+    state.gacha={date:today(),id:it.id};save();
+    spinning=false;$("#orb").classList.remove("shake");$("#orb").textContent="🌙";
+    renderShelves();renderGacha();
+    const sp=document.querySelector('.spine[data-id="'+it.id+'"]');
+    if(sp&&sp.scrollIntoView){try{sp.scrollIntoView({block:"nearest",inline:"center",behavior:"smooth"})}catch(e){}}
+  },1300);
+}
+function renderForm(){
+  const gb=$("#fGenre");gb.innerHTML="";
+  GK.forEach(g=>{
+    const b=document.createElement("button");b.type="button";b.className="chip";b.setAttribute("aria-pressed",form.g===g);
+    b.setAttribute("data-demo","form-genre-"+g);b.textContent=G[g]+" "+t("genreName_"+g);
+    b.onclick=()=>{form.g=g;$("#lBy").textContent=t("by_"+g);$("#fBy").placeholder=t("by_"+g);renderForm()};
+    gb.appendChild(b);
+  });
+  $("#lBy").textContent=t("by_"+form.g);$("#fBy").placeholder=t("by_"+form.g);
+  const sb=$("#fStars");sb.innerHTML="";
+  for(let i=1;i<=5;i++){
+    const b=document.createElement("button");b.type="button";b.className="star"+(i<=form.r?" on":"");
+    b.textContent="★";b.setAttribute("aria-label",i+" "+t("ratingAria"));b.setAttribute("aria-pressed",i===form.r);
+    b.setAttribute("data-demo","form-star-"+i);b.onclick=()=>{form.r=i;renderForm()};sb.appendChild(b);
+  }
+  const cb=$("#fColors");cb.innerHTML="";
+  COLORS.forEach((c,i)=>{
+    const b=document.createElement("button");b.type="button";b.className="sw";b.style.background=c;
+    b.setAttribute("aria-pressed",form.col===i);b.setAttribute("aria-label",t("lColor")+" "+(i+1));
+    b.setAttribute("data-demo","form-color-"+i);b.onclick=()=>{form.col=i;renderForm()};cb.appendChild(b);
+  });
+}
+function openSheet(id){openId=id;delArm=false;renderSheet();}
+function closeSheet(){openId=null;renderSheet();}
+function renderSheet(){
+  const sh=$("#sheet"),card=$("#card");
+  const it=state.items.find(i=>i.id===openId);
+  if(!it){sh.classList.remove("on");return}
+  sh.classList.add("on");
+  const notes=it.notes||[];
+  card.innerHTML=`<div class="g">${G[it.g]} ${esc(t("genreName_"+it.g))}</div><h3 id="sTitle">${esc(tx(it.t))}</h3>
+  ${tx(it.by)?`<div class="by">${esc(tx(it.by))}</div>`:""}
+  <div style="margin:8px 0"><span class="stars" style="color:#c48f00">${stars(it.r)}</span></div>
+  <div>${tx(it.c)?"「"+esc(tx(it.c))+"」":""}</div>
+  <h4 style="margin:16px 0 6px;font-size:13px;color:#6b6190">${esc(t("notesTitle"))}</h4>
+  <ul class="notes" data-demo="notes-list">${notes.length?notes.map(n=>`<li>${esc(n)}</li>`).join(""):`<li style="background:none;padding:0;color:#8a7fb0">${esc(t("noNotes"))}</li>`}</ul>
+  <div class="row"><input type="text" id="nIn" data-demo="note-input" maxlength="80" placeholder="${esc(t("phNote"))}" style="flex:1;min-width:160px;border:1px solid #d8d0ee;border-radius:10px;padding:10px 12px"><button type="button" class="btn sm" id="nAdd" data-demo="note-add">${esc(t("addNote"))}</button></div>
+  <div class="row" style="margin-top:16px;justify-content:space-between"><button type="button" class="btn ghost sm del" id="dBtn" data-demo="detail-delete">${esc(delArm?t("delSure"):t("del"))}</button><button type="button" class="btn sm" id="xBtn" data-demo="detail-close">${esc(t("close"))}</button></div>`;
+  $("#xBtn").onclick=closeSheet;
+  $("#nAdd").onclick=addNote;
+  $("#nIn").onkeydown=e=>{if(e.key==="Enter"){e.preventDefault();addNote()}};
+  $("#dBtn").onclick=()=>{
+    if(!delArm){delArm=true;renderSheet();return}
+    state.items=state.items.filter(i=>i.id!==it.id);
+    if(state.gacha&&state.gacha.id===it.id)state.gacha=null;
+    save();openId=null;renderShelves();renderGacha();renderSheet();toast(t("removed"));
+  };
+}
+function addNote(){
+  const it=state.items.find(i=>i.id===openId);const v=$("#nIn").value.trim();
+  if(!it||!v)return;
+  it.notes=(it.notes||[]).concat(v);save();renderSheet();toast(t("noteSaved"));
+}
+function toast(m){
+  const e=$("#toast");e.textContent=m;e.classList.add("on");clearTimeout(tt);tt=setTimeout(()=>e.classList.remove("on"),2200);
+}
+document.querySelectorAll(".chip[data-f]").forEach(b=>b.onclick=()=>{filter=b.dataset.f;renderFilters();renderShelves()});
+$("#lj").onclick=()=>setLang("ja",true);
+$("#le").onclick=()=>setLang("en",true);
+$("#gbtn").onclick=spin;
+$("#greset").onclick=()=>{state.gacha=null;save();$("#orb").textContent="🎁";renderShelves();renderGacha();toast(t("resetDone"))};
+$("#addBtn").onclick=()=>{const f=$("#form");f.classList.toggle("on");if(f.classList.contains("on"))$("#fTitle").focus()};
+$("#cancel").onclick=()=>$("#form").classList.remove("on");
+$("#form").onsubmit=e=>{
+  e.preventDefault();
+  const title=$("#fTitle").value.trim();
+  if(!title){toast(t("needTitle"));$("#fTitle").focus();return}
+  state.items.push({id:"n"+Date.now(),g:form.g,t:title,by:$("#fBy").value.trim(),r:form.r,c:$("#fCom").value.trim(),col:form.col,notes:[]});
+  save();$("#fTitle").value="";$("#fBy").value="";$("#fCom").value="";
+  filter="all";$("#form").classList.remove("on");renderFilters();renderShelves();renderGacha();toast(t("added"));
+};
+$("#sheet").addEventListener("click",e=>{if(e.target.id==="sheet")closeSheet()});
+document.addEventListener("keydown",e=>{if(e.key==="Escape"&&openId)closeSheet()});
+initLang();load();
+(function(){if(state.gacha&&state.gacha.date===today())$("#orb").textContent="🌙"})();
+applyLang();
+</script>
+</body>
+</html>
